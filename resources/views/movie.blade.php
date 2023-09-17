@@ -5,29 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="genreslist.js"></script>
   </head>
   <body>
-    <div id="title"></div>
-    <div id="backdrop"></div>
+    <div id="title">
+      <h1><?php echo $data->title ?></h1>
+    </div>
+    <div id="backdrop">
+      <?php 
+        print_r('<img src="https://image.tmdb.org/t/p/w500' . $data->poster_path . '"/>'); 
+        //print_r('<iframe width="600" height="600" src="https://www.youtube.com/embed/' . $data->key . '?controls=0&autoplay=1&mute=1"></iframe>');
+      ?>
+    </div>
     <div id="genres"></div>
     <h2>Overview</h2>
     <div id="overview"></div>
     <script>
-      var accessToken =
+      var data = <?php echo $data->id; ?>;
+      $.ajax({
+        url: '/api/movie/video/' + data,
+        type: "GET",
+        success: (result) => {
+          console.log(result)
+          var backdrop = document.querySelector('#backdrop');
+          backdrop.innerHTML += `<iframe width="600" height="600" src="https://www.youtube.com/embed/${result.results[0].key}?controls=0&autoplay=1&mute=1"></iframe>`
+        }
+      })
+      /*var accessToken =
         "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3MzU2ZjZjNzgxZjg0MjAyNjM2N2I4YmFhMjI1YWJkYiIsInN1YiI6IjY1MDFjOTdkNTU0NWNhMDBhYjVkYmRkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.zvglGM1QgLDK33Dt6PpMK9jeAOrLNnxClZ6mkLeMgBE";
       var overview = sessionStorage.getItem("overview");
       var title = sessionStorage.getItem("title");
       var posterpath = sessionStorage.getItem("posterpath");
       var id = sessionStorage.getItem("id");
       var genres = sessionStorage.getItem("genres");
-      console.log(genres);
 
       document.querySelector("#title").innerHTML = "<h1>" + title + "</h1>";
       document.querySelector("#overview").innerHTML = overview;
       var backdropdiv = document.querySelector("#backdrop");
       var genresdiv = document.querySelector("#genres");
-      backdropdiv.innerHTML += `<img src="https://image.tmdb.org/t/p/w500${posterpath}"/>`;
+      backdropdiv.innerHTML += `<img src="https://image.tmdb.org/t/p/w500` +  + `"/>`;
       $.ajax({
         url: `https://api.themoviedb.org/3/movie/${id}/videos`,
         type: "GET",
@@ -36,8 +51,6 @@
         },
         success: (result) => {
           backdropdiv.innerHTML += `<iframe width="600" height="600" src="https://www.youtube.com/embed/${result.results[0].key}?controls=0&autoplay=1&mute=1"></iframe>`;
-          console.log(result.results[0]);
-          console.log(typeof genres);
           let temp = genres.split(",");
           temp.forEach((element) => {
             genrenames.genres.forEach((e) => {
@@ -47,7 +60,7 @@
             });
           });
         },
-      });
+      });*/
     </script>
   </body>
 </html>
