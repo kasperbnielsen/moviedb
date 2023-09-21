@@ -9,6 +9,7 @@
   <body>
     <div id="title">
       <h1><?php echo $data->title ?></h1>
+      <h2>heyyy</h2>
     </div>
     <div id="backdrop">
       <?php 
