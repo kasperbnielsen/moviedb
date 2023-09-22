@@ -15,13 +15,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('index');
+    return view('test');
 });
 
 Route::get('/movie', function () {
     return view('movie');
 });
 
-Route::get('/test', [movieController::class, 'loadPopular']);
+Route::get('/', [movieController::class, 'loadPopular']);
 
 Route::Get('movie/{id}', [movieController::class, 'getDetails']);

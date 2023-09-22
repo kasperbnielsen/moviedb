@@ -9,7 +9,6 @@
   <body>
     <div id="title">
       <h1><?php echo $data->title ?></h1>
-      <h2>heyyy</h2>
     </div>
     <div id="backdrop">
       <?php 
@@ -17,9 +16,18 @@
         //print_r('<iframe width="600" height="600" src="https://www.youtube.com/embed/' . $data->key . '?controls=0&autoplay=1&mute=1"></iframe>');
       ?>
     </div>
-    <div id="genres"></div>
+    <div id="genres">
+      <?php foreach($data->genres as $e) {
+        print_r("<button class='genrebuttons' type='submit'>{$e->name}</button>");
+      }
+        ?>
+    </div>
     <h2>Overview</h2>
-    <div id="overview"></div>
+    <div id="overview">
+    <?php 
+      print_r("<p>$data->overview</p>")
+    ?>
+    </div>
     <script>
       var data = <?php echo $data->id; ?>;
       $.ajax({

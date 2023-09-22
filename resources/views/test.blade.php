@@ -9,15 +9,17 @@
 <body>
 <header class="search">
       <a class="menu">menu</a>
-      <form id="form" type="submit" action="/test" method="get">
-        <input id="input" type="search" class="searchinput" name="query" />
-        <button class="searchbutton" type="submit"></button>
-      </form>
+      <div>
+        <form id="form" type="submit" action="/test" method="get">
+          <input id="input" type="search" class="searchinput" name="query" autocomplete="off" />
+          <button class="searchbutton" type="submit"></button>
+        </form>
+        <div id="dropdowndiv" class="dropdown"></div>
+      </div>
       <a class="menu">Login</a>
     </header>
     <div id="searchPoster"></div>
     <?php
-        $index = 0;
         $data = session('data');
         $poster = session('poster');
         if(isset($data)) {
@@ -43,30 +45,125 @@
 
         var posters = document.querySelectorAll(".redposter");
 
-        posters.forEach((element, i) => {
-              element.addEventListener("click", (event) => {
-                <?php 
-                  $id = $data[$index]->id;
-                  $index++;
-                  ?>
-                window.location.href = `movie/` + <?php echo $id; ?>
+          <?php for ($i = 0; $i < 6; $i++) {?>
+              posters[<?php echo $i ?>].addEventListener("click", (event) => {
+                <?php $id = $data[$i]->id; ?>
+                window.location.href = `/movie/` + "<?php echo $id; ?>"
               });
-            });
-        
-       /*var posters = document.querySelectorAll(".redposter");
+          <?php } ?>
+       
 
-            posters.forEach((element, i) => {
-              element.addEventListener("click", (event) => {
-                var data = result.results[i];
-                sessionStorage.setItem("posterpath", data.poster_path);
-                sessionStorage.setItem("title", data.title);
-                sessionStorage.setItem("overview", data.overview);
-                sessionStorage.setItem("id", data.id);
-                sessionStorage.setItem("genres", data.genre_ids);
-                window.location.href = `movie/${element.id}`;
+
+
+
+
+
+
+
+
+
+
+      const APIKEY = "7356f6c781f842026367b8baa225abdb";
+      function setupDropdown() {
+        let temp = document.querySelector("#dropdowndiv");
+        let searchinput = document.querySelector(".searchinput");
+        const whatever = (event) => {
+          if (searchinput.value != "") {
+            temp.style.display = "grid";
+            temp.style.gridTemplateRows = 3;
+          } else {
+            temp.style.display = "none";
+          }
+        };
+        searchinput.addEventListener("input", (event) => {
+          temp.innerHTML = "";
+          console.log(searchinput.value);
+          $.ajax({
+            url: `https://api.themoviedb.org/3/search/movie?query=${searchinput.value}&api_key=${APIKEY}`,
+            type: "GET",
+            success: (result) => {
+              if (result) {
+                result.results.slice(0, 5).forEach((element) => {
+                  addMovieToDropdown(element.id);
+                });
+              }
+            },
+            error: (err) => {
+              console.log(err);
+            },
+          });
+          if (searchinput.value != "") {
+            temp.style.display = "grid";
+            temp.style.gridTemplateRows = 3;
+          } else {
+            temp.style.display = "none";
+          }
+        });
+        window.addEventListener("load", whatever);
+      }
+
+      function addMovieToDropdown(id) {
+        let accessToken =
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3MzU2ZjZjNzgxZjg0MjAyNjM2N2I4YmFhMjI1YWJkYiIsInN1YiI6IjY1MDFjOTdkNTU0NWNhMDBhYjVkYmRkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.zvglGM1QgLDK33Dt6PpMK9jeAOrLNnxClZ6mkLeMgBE";
+        $.ajax({
+          url: `https://api.themoviedb.org/3/movie/${id}`,
+          type: "GET",
+          beforeSend: (req) => {
+            req.setRequestHeader("Authorization", accessToken);
+          },
+          success: (result) => {
+            let a = document.createElement("a");
+            let title = document.createElement("h3");
+            let year = document.createElement("h3");
+            let actors = document.createElement("h3");
+            let img = document.createElement("img");
+            let div = document.createElement("div");
+            let div2 = document.createElement("div");
+            if (result.poster_path == null) {
+              img.setAttribute(
+                "src",
+                "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-63747.jpg?w=2000"
+              );
+            } else {
+              img.setAttribute(
+                "src",
+                `https://image.tmdb.org/t/p/w500${result.poster_path}`
+              );
+            }
+            img.setAttribute("class", "dropdownimage");
+            div.appendChild(img);
+            a.addEventListener("click", (event) => {
+              var data = result;
+              sessionStorage.setItem("posterpath", data.poster_path);
+              sessionStorage.setItem("title", data.title);
+              sessionStorage.setItem("overview", data.overview);
+              sessionStorage.setItem("id", data.id);
+              var genredata = "";
+              data.genres.forEach((element) => {
+                genredata += element.id + ",";
               });
+              sessionStorage.setItem("genres", genredata);
+              window.location.href = `movie/${data.id}`;
             });
-        //}*/
+            actors.setAttribute("id", "undertitle");
+            year.setAttribute("id", "undertitle");
+            year.textContent = result.release_date.substr(0, 4);
+            title.textContent = result.title;
+            actors.textContent = "Leonardo DiCaprio";
+            div2.setAttribute("id", "div2");
+            div2.appendChild(title);
+            div2.appendChild(year);
+            div2.appendChild(actors);
+            div.appendChild(div2);
+            div.setAttribute("class", "dropdownitem");
+            div.setAttribute("id", "dropdowndiv2");
+            a.appendChild(div);
+            document.querySelector("#dropdowndiv").appendChild(a);
+          },
+        });
+      }
+
+      setupDropdown();
     </script>
 </body>
 </html>
@@ -174,5 +271,46 @@
     margin-left: 30vh;
     margin-top: 10vh;
     margin-right: 30vh;
+  }
+
+  #dropdowndiv {
+    width: 140vh;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    background-color: #999;
+  }
+
+  .dropdown {
+    width: 150vh;
+  }
+
+  .dropdownitem {
+    height: fit-content;
+    border-bottom: 1px solid grey;
+  }
+
+  .dropdownimage {
+    width: 5%;
+    height: 7%;
+    padding: 0.5rem;
+  }
+
+  #dropdowndiv2 {
+    display: flex;
+  }
+
+  .dropdowntitle {
+    display: flex;
+    justify-content: left;
+  }
+
+  #undertitle {
+    font-weight: normal;
+  }
+
+  #div2 {
+    margin-left: 2%;
   }
   </style>
