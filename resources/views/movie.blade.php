@@ -7,6 +7,8 @@
   <title>Document</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="genreslist.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 
 <body>
@@ -14,8 +16,19 @@
     @include('search')
   </div>
   <div id="innerbody">
-    <div id="title">
-      <h1><?php echo $data->title ?></h1>
+    <div id="title-div">
+      <div id="title">
+        <h1><?php echo $data->title; ?></h1>
+        <ul id=under-title-div>
+          <a><?php echo substr($data->release_date, 0, 4); ?></a>
+          <li><?php echo intval(($data->runtime) / 60);
+              echo "h ";
+              echo ($data->runtime % 60);
+              echo "m"; ?></li>
+        </ul>
+      </div>
+      <h3><span class="fa fa-star checked"></span><?php echo substr($data->vote_average, 0, 3) ?> / 10</h3>
+      <h3 id="popularity-header"><i class="fa fa-eye"></i><?php echo intval($data->popularity) ?></h3>
     </div>
     <div id="backdrop">
       <?php
@@ -25,7 +38,7 @@
     </div>
     <div id="genres">
       <?php foreach ($data->genres as $e) {
-        print_r("<button class='genrebuttons' type='submit'>{$e->name}</button>");
+        print_r("<button class='genrebuttons'>{$e->name}</button>");
       }
       ?>
     </div>
@@ -55,6 +68,8 @@
 
 </html>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
   iframe {
     aspect-ratio: 16 / 9;
     height: 600;
@@ -65,6 +80,16 @@
   #title {
     display: flex;
     justify-content: left;
+  }
+
+  h1 {
+    margin-bottom: -1rem;
+  }
+
+  #title {
+    flex-direction: column;
+    width: 20%;
+    margin-right: 55rem;
   }
 
   img {
@@ -80,7 +105,8 @@
   }
 
   body {
-    height: 200vh;
+    min-height: 100vh;
+    height: 100%;
   }
 
   #genres {
@@ -115,6 +141,10 @@
     padding: 0;
   }
 
+  * {
+    font-family: Montserrat;
+  }
+
   #innerbody {
     background-color: #111;
     height: 100%;
@@ -123,5 +153,57 @@
     max-width: 75%;
   }
 
-  #includesearch {}
+  #under-title-div {
+    display: flex;
+    padding: 0;
+  }
+
+  #under-title-div>* {
+    margin-right: 2rem;
+    font-size: 0.8rem;
+  }
+
+  #title-div {
+    display: flex;
+  }
+
+  h3 {
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+
+  h3:before {
+    display: flex;
+    opacity: 0.7;
+    color: white;
+    content: "RATING";
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  #popularity-header {
+    margin-left: 3rem;
+    color: white;
+  }
+
+  #popularity-header:before {
+    content: "POPULARITY";
+  }
+
+  i {
+    color: orange;
+  }
+
+  span {
+    color: yellow
+  }
+
+  i,
+  span {
+    margin-right: 0.5rem;
+  }
 </style>

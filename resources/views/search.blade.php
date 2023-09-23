@@ -144,7 +144,6 @@
     color: #555;
     display: flex;
     border: 1px solid currentColor;
-    border-radius: 5px;
   }
 
 
