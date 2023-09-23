@@ -12,9 +12,7 @@
 </head>
 
 <body>
-  <div id="includesearch">
-    @include('search')
-  </div>
+  @include('search')
   <div id="innerbody">
     <div id="title-div">
       <div id="title">
@@ -27,8 +25,8 @@
               echo "m"; ?></li>
         </ul>
       </div>
-      <h3><span class="fa fa-star checked"></span><?php echo substr($data->vote_average, 0, 3) ?> / 10</h3>
-      <h3 id="popularity-header"><i class="fa fa-eye"></i><?php echo intval($data->popularity) ?></h3>
+      <h3 class="h3"><span class="fa fa-star checked"></span><?php echo substr($data->vote_average, 0, 3) ?> / 10</h3>
+      <h3 class="h3" id="popularity-header"><i class="fa fa-eye"></i><?php echo intval($data->popularity) ?></h3>
     </div>
     <div id="backdrop">
       <?php
@@ -59,7 +57,7 @@
 </body>
 
 </html>
-<style>
+<style scoped>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
   iframe {
@@ -160,7 +158,7 @@
     display: flex;
   }
 
-  h3 {
+  .h3 {
     color: white;
     font-size: 14px;
     font-weight: 700;
@@ -168,7 +166,7 @@
     margin-top: 1.5rem;
   }
 
-  h3:before {
+  .h3:before {
     display: flex;
     opacity: 0.7;
     color: white;
