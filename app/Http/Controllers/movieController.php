@@ -32,10 +32,6 @@ class movieController extends Controller
         //return view('test')->with('poster', $decode2->results[0]->poster_path);
     }
 
-    public function getVideo($id)
-    {
-    }
-
     public function getDetails($id)
     {
         $accessToken =

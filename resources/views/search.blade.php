@@ -1,5 +1,5 @@
 <header class="search">
-  <a id="menu" class="menu">menu</a>
+  <a class="menu">menu</a>
   <div>
     <form id="form" type="submit" action="/test" method="get">
       <input id="input" type="search" class="searchinput" name="query" autocomplete="off" />
@@ -7,9 +7,41 @@
     </form>
     <div id="dropdowndiv" class="dropdown"></div>
   </div>
-  <a id="login" class="menu">Login</a>
+  <button id="openModal" class=" menu" type="button">Login</button>
 </header>
+<div id="login-modal">
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <div>
+        <span class="close">&times;</span>
+        <h1 id="modal-title">Log in</h1>
+      </div>
+      <form id="login-form">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required />
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required />
+        <button id="login-button" type="submit">Log in</button>
+      </form>
+      <div id="sign-up">
+        <a href="">Sign up</a>
+      </div>
+      <div id="forgot-password">
+        <a href="">Forgot password</a>
+      </div>
+    </div>
+
+  </div>
+</div>
 <script>
+  document.querySelector('#openModal').addEventListener('click', (event) => {
+    document.querySelector('.modal').style.visibility = "visible";
+  })
+
+  document.querySelector('.close').addEventListener('click', (event) => {
+    document.querySelector('.modal').style.visibility = "hidden";
+  })
+
   const APIKEY = "7356f6c781f842026367b8baa225abdb";
 
   function setupDropdown() {
@@ -91,7 +123,7 @@
             genredata += element.id + ",";
           });
           sessionStorage.setItem("genres", genredata);
-          window.location.href = `movie/${data.id}`;
+          window.location.href = `/movie/${data.id}`;
         });
         actors.setAttribute("id", "undertitle");
         year.setAttribute("id", "undertitle");
@@ -113,8 +145,14 @@
   setupDropdown();
 </script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+  * {
+    font-family: Montserrat, sans-serif;
+  }
+
   #dropdowndiv {
-    width: 90rem;
+    width: 91rem;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -138,9 +176,7 @@
     margin: 0 5rem 0 5rem
   }
 
-
-
-  form {
+  #form {
     color: #555;
     display: flex;
     border: 1px solid currentColor;
@@ -154,11 +190,11 @@
     padding: 7px 8px;
     font-size: 14px;
     color: inherit;
-    width: 90rem;
+    width: 91rem;
     border-radius: 2px;
   }
 
-  button[type="submit"] {
+  .searchbutton {
     text-indent: -999px;
     overflow: hidden;
     width: 40px;
@@ -170,6 +206,14 @@
     cursor: pointer;
     opacity: 1;
     background-color: white;
+  }
+
+  #login-button {
+    height: 2rem;
+    background-color: #999;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
   }
 
   button[type="submit"]:hover {
@@ -203,5 +247,82 @@
 
   #undertitle {
     font-weight: normal;
+  }
+
+  .modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .modal-content {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    right: 0;
+    background-color: #fefefe;
+    margin: 5rem 30rem 5rem 30rem;
+    width: auto;
+    height: auto;
+    padding: 20px;
+    border-radius: 20px;
+
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #openModal {
+    border: none;
+    background: none;
+    color: white;
+  }
+
+  #login-modal {
+    color: black;
+  }
+
+  #login-form {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    margin: auto;
+    margin-top: 10rem;
+  }
+
+  #sign-up,
+  #forgot-password {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    color: #555;
+  }
+
+  #login-form>input {
+    height: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  #modal-title {
+    display: flex;
+    justify-content: center;
   }
 </style>
