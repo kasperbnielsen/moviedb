@@ -33,7 +33,6 @@
     <div id="backdrop">
       <?php
       print_r('<img src="https://image.tmdb.org/t/p/w500' . $data->poster_path . '"/>');
-      //print_r('<iframe width="600" height="600" src="https://www.youtube.com/embed/' . $data->key . '?controls=0&autoplay=1&mute=1"></iframe>');
       ?>
     </div>
     <div id="genres">
@@ -52,16 +51,9 @@
       <h4 id="commentsheader">Reviews</h4>
     </div>
     <script>
-      var data = <?php echo $data->id; ?>;
-      $.ajax({
-        url: '/api/movie/video/' + data,
-        type: "GET",
-        success: (result) => {
-          console.log(result)
-          var backdrop = document.querySelector('#backdrop');
-          backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${result.results[0].key}?controls=0&autoplay=0&mute=1"></iframe>`
-        }
-      })
+      let key = "<?php echo $key->results[0]->key; ?>";
+      var backdrop = document.querySelector('#backdrop');
+      backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`
     </script>
   </div>
 </body>
@@ -161,6 +153,7 @@
   #under-title-div>* {
     margin-right: 2rem;
     font-size: 0.8rem;
+    opacity: 0.7;
   }
 
   #title-div {

@@ -32,6 +32,10 @@ class movieController extends Controller
         //return view('test')->with('poster', $decode2->results[0]->poster_path);
     }
 
+    public function getVideo($id)
+    {
+    }
+
     public function getDetails($id)
     {
         $accessToken =
@@ -39,16 +43,9 @@ class movieController extends Controller
         $url = 'https://api.themoviedb.org/3/movie/' . $id . '?language=en-US';
         $res = Http::withHeaders(["Authorization" => $accessToken])->get($url);
         $data = json_decode($res->body(), false);
-        return view('movie', ['data' => $data]);
-    }
-
-    public function getVideo($id)
-    {
-        $accessToken =
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3MzU2ZjZjNzgxZjg0MjAyNjM2N2I4YmFhMjI1YWJkYiIsInN1YiI6IjY1MDFjOTdkNTU0NWNhMDBhYjVkYmRkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.zvglGM1QgLDK33Dt6PpMK9jeAOrLNnxClZ6mkLeMgBE";
-        $url = 'https://api.themoviedb.org/3/movie/' . $id . '/videos';
-        $res = Http::withHeaders(["Authorization" => $accessToken])->get($url);
-        $decode = json_decode($res->body(), false);
-        return $decode;
+        $url2 = 'https://api.themoviedb.org/3/movie/' . $id . '/videos';
+        $res2 = Http::withHeaders(["Authorization" => $accessToken])->get($url2);
+        $decode = json_decode($res2->body(), false);
+        return view('movie', ['data' => $data, 'key' => $decode]);
     }
 }

@@ -78,7 +78,7 @@
 
     posters.forEach((element, i) => {
       element.addEventListener('click', (event) => {
-        window.location.href = '/movie/' + data[i + counter - 1].id;
+        window.location.href = '/movie/' + data[i + counter].id;
       })
     })
   </script>
