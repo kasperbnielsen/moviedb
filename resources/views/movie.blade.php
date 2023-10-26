@@ -47,13 +47,54 @@
     </div>
     <div>
       <h4 id="commentsheader">Reviews</h4>
+      <div id="comments">
+        <div>
+          <div>
+            <form id="commentForm" type="submit">
+              <input id="commentInput" type="text" placeholder="Write comment..." />
+              <button type="submit">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <script>
+        refreshComments()
+        let comments = document.querySelector("#comments")
+        let key = "<?php echo $key->results[0]->key; ?>";
+        var backdrop = document.querySelector('#backdrop');
+        backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`
+
+        document.querySelector("#commentForm").addEventListener("submit", (event) => {
+          event.preventDefault()
+
+          const input = document.querySelector("#commentInput").value;
+
+          postComment(window.location.pathname.substr(7), input)
+        })
+
+        function postComment(movieId, body) {
+          $.ajax({
+            url: `/api/post/${movieId}/${body}`,
+            type: "GET",
+            success: (result) => {
+              console.log(result)
+            }
+          })
+        }
+
+        function refreshComments() {
+          $.ajax({
+            url: `/api/getmovie/${window.location.pathname.substr(7)}`,
+            type: "GET",
+            success: (result) => {
+              for (let i = 0; i < result.length; i++) {
+                comments.innerHTML += `<p>${result[i].body}</p>`
+              }
+            }
+          })
+        }
+      </script>
     </div>
-    <script>
-      let key = "<?php echo $key->results[0]->key; ?>";
-      var backdrop = document.querySelector('#backdrop');
-      backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`
-    </script>
-  </div>
 </body>
 
 </html>

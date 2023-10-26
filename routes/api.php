@@ -24,4 +24,12 @@ Route::get('/test/{query}', [movieController::class, 'setupSearch']);
 
 Route::get('/movie/video/{id}', [movieController::class, 'getVideo']);
 
-Route::get('/post/{body}', [CommentController::class, 'store']);
+Route::get('/post/{movieId}/{body}', [CommentController::class, 'store']);
+
+Route::get('/delete/{commentId}', [CommentController::class, 'deleteComment']);
+
+Route::get("/update/{commentId}/{body}", [CommentController::class, 'updateComment']);
+
+Route::get("/getuser/{userId}", [CommentController::class, 'getAllForUser']);
+
+Route::get("/getmovie/{movieId}", [CommentController::class, 'getAllForMovie']);
