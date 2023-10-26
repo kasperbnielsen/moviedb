@@ -16,17 +16,27 @@
   <div id="innerbody">
     <div id="title-div">
       <div id="title">
-        <h1><?php echo $data->title; ?></h1>
+        <h1>
+          <?php echo $data->title; ?>
+        </h1>
         <ul id=under-title-div>
-          <a><?php echo substr($data->release_date, 0, 4); ?></a>
-          <li><?php echo intval(($data->runtime) / 60);
-              echo "h ";
-              echo ($data->runtime % 60);
-              echo "m"; ?></li>
+          <a>
+            <?php echo substr($data->release_date, 0, 4); ?>
+          </a>
+          <li>
+            <?php echo intval(($data->runtime) / 60);
+            echo "h ";
+            echo ($data->runtime % 60);
+            echo "m"; ?>
+          </li>
         </ul>
       </div>
-      <h3 class="h3"><span class="fa fa-star checked"></span><?php echo substr($data->vote_average, 0, 3) ?> / 10</h3>
-      <h3 class="h3" id="popularity-header"><i class="fa fa-eye"></i><?php echo intval($data->popularity) ?></h3>
+      <h3 class="h3"><span class="fa fa-star checked"></span>
+        <?php echo substr($data->vote_average, 0, 3) ?> / 10
+      </h3>
+      <h3 class="h3" id="popularity-header"><i class="fa fa-eye"></i>
+        <?php echo intval($data->popularity) ?>
+      </h3>
     </div>
     <div id="backdrop">
       <?php
@@ -48,53 +58,56 @@
     <div>
       <h4 id="commentsheader">Reviews</h4>
       <div id="comments">
-        <div>
-          <div>
-            <form id="commentForm" type="submit">
-              <input id="commentInput" type="text" placeholder="Write comment..." />
-              <button type="submit">Submit</button>
-            </form>
-          </div>
-        </div>
+
       </div>
-      <script>
-        refreshComments()
-        let comments = document.querySelector("#comments")
-        let key = "<?php echo $key->results[0]->key; ?>";
-        var backdrop = document.querySelector('#backdrop');
-        backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`
-
-        document.querySelector("#commentForm").addEventListener("submit", (event) => {
-          event.preventDefault()
-
-          const input = document.querySelector("#commentInput").value;
-
-          postComment(window.location.pathname.substr(7), input)
-        })
-
-        function postComment(movieId, body) {
-          $.ajax({
-            url: `/api/post/${movieId}/${body}`,
-            type: "GET",
-            success: (result) => {
-              console.log(result)
-            }
-          })
-        }
-
-        function refreshComments() {
-          $.ajax({
-            url: `/api/getmovie/${window.location.pathname.substr(7)}`,
-            type: "GET",
-            success: (result) => {
-              for (let i = 0; i < result.length; i++) {
-                comments.innerHTML += `<p>${result[i].body}</p>`
-              }
-            }
-          })
-        }
-      </script>
+      <div>
+        <form id="commentForm" type="submit">
+          <input id="commentInput" type="text" placeholder="Write comment..." />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </div>
+    <script>
+      let comments = document.querySelector("#comments")
+      let key = "<?php echo $key->results[0]->key; ?>";
+      var backdrop = document.querySelector('#backdrop');
+      backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`
+
+      function postComment(movieId, body) {
+        $.ajax({
+          url: `/api/post/${movieId}/${body}`,
+          type: "GET",
+          success: (result) => {
+            console.log(result)
+          }
+        })
+      }
+
+      document.querySelector("#commentForm").addEventListener('submit', (event) => {
+        event.preventDefault()
+        const input = document.querySelector("#commentInput").value;
+
+        postComment(window.location.pathname.substr(7), input)
+        refreshComments()
+      })
+
+
+
+      function refreshComments() {
+        $.ajax({
+          url: `/api/getmovie/${window.location.pathname.substr(7)}`,
+          type: "GET",
+          success: (result) => {
+            comments.innerHTML = ""
+            for (let i = 0; i < result.length; i++) {
+              comments.innerHTML += `<p>${result[i].body}</p>`
+            }
+          }
+        })
+      }
+      refreshComments()
+    </script>
+  </div>
 </body>
 
 </html>
