@@ -2,253 +2,274 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="genreslist.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
-  @include('search')
-  <div id="innerbody">
-    <div id="title-div">
-      <div id="title">
-        <h1>
-          <?php echo $data->title; ?>
-        </h1>
-        <ul id=under-title-div>
-          <a>
-            <?php echo substr($data->release_date, 0, 4); ?>
-          </a>
-          <li>
-            <?php echo intval(($data->runtime) / 60);
-            echo "h ";
-            echo ($data->runtime % 60);
-            echo "m"; ?>
-          </li>
-        </ul>
-      </div>
-      <h3 class="h3"><span class="fa fa-star checked"></span>
-        <?php echo substr($data->vote_average, 0, 3) ?> / 10
-      </h3>
-      <h3 class="h3" id="popularity-header"><i class="fa fa-eye"></i>
-        <?php echo intval($data->popularity) ?>
-      </h3>
-    </div>
-    <div id="backdrop">
-      <?php
-      print_r('<img src="https://image.tmdb.org/t/p/w500' . $data->poster_path . '"/>');
-      ?>
-    </div>
-    <div id="genres">
-      <?php foreach ($data->genres as $e) {
-        print_r("<button class='genrebuttons'>{$e->name}</button>");
-      }
-      ?>
-    </div>
-    <h2>Overview</h2>
-    <div id="overview">
-      <?php
-      print_r("<p>$data->overview</p>")
-      ?>
-    </div>
-    <div>
-      <h4 id="commentsheader">Reviews</h4>
-      <div id="comments">
+    @include('search')
+    <div id="innerbody">
+        <div id="title-div">
+            <div id="title">
+                <h1>
+                    <?php echo $data->title; ?>
+                </h1>
+                <ul id="under-title-div">
+                    <a>
+                        <?php echo substr($data->release_date, 0, 4); ?>
+                    </a>
+                    <li>
+                        <?php echo intval($data->runtime / 60);
+                        echo 'h ';
+                        echo $data->runtime % 60;
+                        echo 'm'; ?>
+                    </li>
+                </ul>
+            </div>
+            <h3 class="h3"><span class="fa fa-star checked"></span>
+                <?php echo substr($data->vote_average, 0, 3); ?> / 10
+            </h3>
+            <h3 class="h3" id="popularity-header"><i class="fa fa-eye"></i>
+                <?php echo intval($data->popularity); ?>
+            </h3>
+        </div>
+        <div id="backdrop">
+            <?php
+            print_r('<img src="https://image.tmdb.org/t/p/w500' . $data->poster_path . '"/>');
+            ?>
+        </div>
+        <div id="genres">
+            <?php foreach ($data->genres as $e) {
+                print_r("<button class='genrebuttons'>{$e->name}</button>");
+            }
+            ?>
+        </div>
+        <h2>Overview</h2>
+        <div id="overview">
+            <?php
+            print_r("<p>$data->overview</p>");
+            ?>
+        </div>
+        <div>
+            <h4 id="commentsheader">Reviews</h4>
+            <div id="comments">
 
-      </div>
-      <div>
-        <form id="commentForm" type="submit">
-          <input id="commentInput" type="text" placeholder="Write comment..." />
-          <button type="submit">Submit</button>
-        </form>
-      </div>
+            </div>
+            <div>
+                <form id="commentForm" type="submit">
+                    <input id="commentInput" type="text" placeholder="Write comment..." />
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
     </div>
-    <script>
-      let comments = document.querySelector("#comments")
-      let key = "<?php echo $key->results[0]->key; ?>";
-      var backdrop = document.querySelector('#backdrop');
-      backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`
+</body>
+<script>
+    let comments = document.querySelector("#comments");
+    let key = "<?php echo $key->results[0]->key; ?>";
+    var backdrop = document.querySelector('#backdrop');
+    backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`;
 
-      function postComment(movieId, body) {
+    function postComment(movieId, body) {
         $.ajax({
-          url: `/api/post/${movieId}/${body}`,
-          type: "GET",
-          success: (result) => {
-            console.log(result)
-          }
+            url: `/api/post/${movieId}/${body}`,
+            type: "GET",
+            success: (result) => {
+                console.log(result)
+            }
         })
-      }
+    }
 
-      document.querySelector("#commentForm").addEventListener('submit', (event) => {
-        event.preventDefault()
+    function deleteComment(commentsId) {
+        $.ajax({
+            url: `/api/delete/${commentsId}`,
+            type: "GET",
+            success: (result) => {
+                refreshComments()
+            }
+        })
+    }
+
+    function refreshComments() {
+        $.ajax({
+            url: `/api/getmovie/${window.location.pathname.substr(7)}`,
+            type: "GET",
+            success: (result) => {
+                comments.innerHTML = ""
+                for (let i = 0; i < result.length; i++) {
+                    comments.innerHTML +=
+                        `<div class="comments"><p class="commentsBody"> ${result[i].body} </p><button onclick="deleteComment('${result[i].commentsId}')" id="commentsDelete"> X</button> </div>`
+                }
+
+            }
+        })
+    }
+
+    document.querySelector("#commentForm").addEventListener('submit', (event) => {
+        event.preventDefault();
         const input = document.querySelector("#commentInput").value;
 
         postComment(window.location.pathname.substr(7), input)
         refreshComments()
-      })
-
-
-
-      function refreshComments() {
-        $.ajax({
-          url: `/api/getmovie/${window.location.pathname.substr(7)}`,
-          type: "GET",
-          success: (result) => {
-            comments.innerHTML = ""
-            for (let i = 0; i < result.length; i++) {
-              comments.innerHTML += `<p>${result[i].body}</p>`
-            }
-          }
-        })
-      }
-      refreshComments()
-    </script>
-  </div>
-</body>
+    })
+    refreshComments();
+</script>
 
 </html>
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-  iframe {
-    aspect-ratio: 16 / 9;
-    height: 600;
-    width: 100%;
-  }
+    .comments {
+        display: flex;
+    }
 
-  #backdrop,
-  #title {
-    display: flex;
-    justify-content: left;
-  }
+    .commentsBody {
+        width: 10rem;
+    }
 
-  h1 {
-    margin-bottom: -1rem;
-  }
+    .commentsDelete {
+        margin-left: 2rem;
+        margin-top: 1rem;
+    }
 
-  #title {
-    flex-direction: column;
-    width: 20%;
-    margin-right: 55rem;
-  }
+    iframe {
+        aspect-ratio: 16 / 9;
+        height: 600;
+        width: 100%;
+    }
 
-  img {
-    width: 400px;
-    height: 600px;
-    border-radius: 2px;
-  }
+    #backdrop,
+    #title {
+        display: flex;
+        justify-content: left;
+    }
 
-  #genres,
-  h2,
-  #overview {
-    padding: 0 2rem 0 2rem
-  }
+    h1 {
+        margin-bottom: -1rem;
+    }
 
-  body {
-    min-height: 100vh;
-    height: 100%;
-  }
+    #title {
+        flex-direction: column;
+        width: 20%;
+        margin-right: 55rem;
+    }
 
-  #genres {
-    padding-bottom: 5vh;
-    padding-top: 5vh;
-  }
+    img {
+        width: 400px;
+        height: 600px;
+        border-radius: 2px;
+    }
 
-  .genrebuttons {
-    background-color: #777;
-    margin-right: 2vh;
-    border-color: white;
-    border-radius: 20px;
-    padding: 5px 10px;
-    font-weight: bold;
-    color: white;
-  }
+    #genres,
+    h2,
+    #overview {
+        padding: 0 2rem 0 2rem
+    }
 
-  .genrebuttons:hover {
-    background-color: #555;
-  }
+    body {
+        min-height: 100vh;
+        height: 100%;
+    }
 
-  #commentsheader {
-    display: flex;
-    justify-content: left;
-    padding: 5rem 2rem 0 2rem;
-  }
+    #genres {
+        padding-bottom: 5vh;
+        padding-top: 5vh;
+    }
 
-  body {
-    background-color: #000;
-    color: white;
-    margin: 0;
-    padding: 0;
-  }
+    .genrebuttons {
+        background-color: #777;
+        margin-right: 2vh;
+        border-color: white;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-weight: bold;
+        color: white;
+    }
 
-  * {
-    font-family: Montserrat;
-  }
+    .genrebuttons:hover {
+        background-color: #555;
+    }
 
-  #innerbody {
-    background-color: #111;
-    height: 100%;
-    margin: auto;
-    padding: 0 2rem 0 2rem;
-    max-width: 75%;
-  }
+    #commentsheader {
+        display: flex;
+        justify-content: left;
+        padding: 5rem 2rem 0 2rem;
+    }
 
-  #under-title-div {
-    display: flex;
-    padding: 0;
-  }
+    body {
+        background-color: #000;
+        color: white;
+        margin: 0;
+        padding: 0;
+    }
 
-  #under-title-div>* {
-    margin-right: 2rem;
-    font-size: 0.8rem;
-    opacity: 0.7;
-  }
+    * {
+        font-family: Montserrat;
+    }
 
-  #title-div {
-    display: flex;
-  }
+    #innerbody {
+        background-color: #111;
+        height: 100%;
+        margin: auto;
+        padding: 0 2rem 0 2rem;
+        max-width: 75%;
+    }
 
-  .h3 {
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
-    text-align: center;
-    margin-top: 1.5rem;
-  }
+    #under-title-div {
+        display: flex;
+        padding: 0;
+    }
 
-  .h3:before {
-    display: flex;
-    opacity: 0.7;
-    color: white;
-    content: "RATING";
-    margin-bottom: 0.5rem;
-    font-weight: 400;
-    font-size: 16px;
-  }
+    #under-title-div>* {
+        margin-right: 2rem;
+        font-size: 0.8rem;
+        opacity: 0.7;
+    }
 
-  #popularity-header {
-    margin-left: 3rem;
-    color: white;
-  }
+    #title-div {
+        display: flex;
+    }
 
-  #popularity-header:before {
-    content: "POPULARITY";
-  }
+    .h3 {
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: center;
+        margin-top: 1.5rem;
+    }
 
-  i {
-    color: orange;
-  }
+    .h3:before {
+        display: flex;
+        opacity: 0.7;
+        color: white;
+        content: "RATING";
+        margin-bottom: 0.5rem;
+        font-weight: 400;
+        font-size: 16px;
+    }
 
-  span {
-    color: yellow
-  }
+    #popularity-header {
+        margin-left: 3rem;
+        color: white;
+    }
 
-  i,
-  span {
-    margin-right: 0.5rem;
-  }
+    #popularity-header:before {
+        content: "POPULARITY";
+    }
+
+    i {
+        color: orange;
+    }
+
+    span {
+        color: yellow
+    }
+
+    i,
+    span {
+        margin-right: 0.5rem;
+    }
 </style>

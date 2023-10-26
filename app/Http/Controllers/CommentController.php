@@ -38,9 +38,9 @@ class CommentController extends Controller
         return $comments;
     }
 
-    public function deleteComment(Request $req, String $commentId)
+    public function deleteComment(Request $req, String $commentsId)
     {
-        $comment = Comment::find($commentId);
+        $comment = Comment::find($commentsId);
 
         $comment->delete();
     }

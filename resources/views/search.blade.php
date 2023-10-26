@@ -31,7 +31,6 @@
           <a href="">Forgot password</a>
         </div>
       </div>
-
     </div>
   </div>
   <script>
@@ -145,7 +144,7 @@
     }
     setupDropdown();
   </script>
-  <style>
+  <style scoped>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
     * {

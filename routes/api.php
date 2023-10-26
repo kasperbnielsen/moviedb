@@ -26,7 +26,7 @@ Route::get('/movie/video/{id}', [movieController::class, 'getVideo']);
 
 Route::get('/post/{movieId}/{body}', [CommentController::class, 'store']);
 
-Route::get('/delete/{commentId}', [CommentController::class, 'deleteComment']);
+Route::get('/delete/{commentsId}', [CommentController::class, 'deleteComment']);
 
 Route::get("/update/{commentId}/{body}", [CommentController::class, 'updateComment']);
 
