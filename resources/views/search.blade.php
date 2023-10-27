@@ -60,6 +60,19 @@
       document.querySelector('.modal').style.visibility = "hidden";
     })
 
+    document.querySelector('#login-form').addEventListener('submit', (event) => {
+      event.preventDefault()
+
+      let email = document.querySelector('#email').value;
+      let password = document.querySelector('#password').value;
+
+      let isLogged = login(email, password);
+
+      if (isLogged) {
+        document.querySelector('#sign-up').innerHTML += "<p>Hello world!</p>"
+      }
+    })
+
     document.querySelector('#signup-form').addEventListener('submit', async (event) => {
       event.preventDefault()
 
@@ -82,6 +95,22 @@
         headers: {
           "Content-Type": "application/json"
         }
+      })
+    }
+
+    function login(email, password) {
+      let url = "/api/login"
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password
+        }),
+        headers: {
+          "Content-type": "application/json"
+        }
+      }).then((res) => {
+        return res;
       })
     }
 

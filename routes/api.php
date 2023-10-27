@@ -36,3 +36,5 @@ Route::get("/getuser/{userId}", [CommentController::class, 'getAllForUser']);
 Route::get("/getmovie/{movieId}", [CommentController::class, 'getAllForMovie']);
 
 Route::post("/signup", [UserController::class, 'createUser']);
+
+Route::post("/login", [UserController::class, 'authUser']);
