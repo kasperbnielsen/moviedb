@@ -55,15 +55,16 @@
         </div>
         <div>
             <h4 id="commentsheader">Reviews</h4>
+            <div class=commentsForm>
+                <form id="commentForm" type="submit">
+                    <textarea id="commentInput" name="Text1" cols="40" rows="5" placeholder="What did you think of the movie"></textarea>
+                    <button class="commentButton" type="submit">Submit</button>
+                </form>
+            </div>
             <div id="comments">
 
             </div>
-            <div>
-                <form id="commentForm" type="submit">
-                    <input id="commentInput" type="text" placeholder="Write comment..." />
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
+
         </div>
     </div>
 </body>
@@ -93,6 +94,16 @@
         })
     }
 
+    function getUsername(userId) {
+        /*** 
+         * http call to endpoint querying database model User on userId getting the username
+         * takes @String userId
+         * return @String username
+         */
+
+        return "username"
+    }
+
     function refreshComments() {
         $.ajax({
             url: `/api/getmovie/${window.location.pathname.substr(7)}`,
@@ -101,7 +112,7 @@
                 comments.innerHTML = ""
                 for (let i = 0; i < result.length; i++) {
                     comments.innerHTML +=
-                        `<div class="comments"><p class="commentsBody"> ${result[i].body} </p><button onclick="deleteComment('${result[i].commentsId}')" id="commentsDelete"> X</button> </div>`
+                        `<div class="commentsUser"><span>${getUsername("userId")}</span>${new Date(result[i].created_at).toString().substr(4, 20)}</div><div class="comments"><p class="commentsBody"> ${result[i].body} </p><button onclick="deleteComment('${result[i].commentsId}')" id="commentsDelete"> X</button> </div>`
                 }
 
             }
@@ -126,8 +137,26 @@
         display: flex;
     }
 
+    .commentButton {}
+
+    #commentInput {
+        width: 30rem;
+        height: 5rem;
+        resize: none;
+    }
+
+    .commentsForm {
+        margin-left: 3rem;
+    }
+
+    .commentsUser {
+        margin-left: 2rem;
+    }
+
     .commentsBody {
-        width: 10rem;
+        width: 75rem;
+        margin-left: 3rem;
+        white-space: pre-wrap;
     }
 
     .commentsDelete {
