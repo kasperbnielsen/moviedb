@@ -17,21 +17,33 @@
           <span class="close">&times;</span>
           <h1 id="modal-title">Log in</h1>
         </div>
-        <form id="login-form">
-          <label for="email">Email</label>
-          <input type="email" name="email" id="email" required />
-          <label for="password">Password</label>
-          <input type="password" name="password" id="password" required />
-          <button id="login-button" type="submit">Log in</button>
-        </form>
-        <div id="sign-up">
-          <a href="">Sign up</a>
+        <div class="signup-content">
+          <form id="signup-form" type="submit">
+            <label for="signupemail">Email</label>
+            <input type="email" name="signupemail" id="signupemail" required />
+            <label for="signupusername">Username</label>
+            <input type="text" name="signupusername" id="signupusername" required />
+            <label for="signuppassword">Password</label>
+            <input type="password" name="signuppassword" id="signuppassword" required />
+            <button id="signup-button" type="submit">Sign up</button>
+          </form>
         </div>
-        <div id="forgot-password">
-          <a href="">Forgot password</a>
+        <div class="login-content">
+          <form id="login-form">
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" required />
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required />
+            <button id="login-button" type="submit">Log in</button>
+          </form>
+          <div id="sign-up">
+            <a>Sign up</a>
+          </div>
+          <div id="forgot-password">
+            <a href="">Forgot password</a>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
   <script>
@@ -39,9 +51,68 @@
       document.querySelector('.modal').style.visibility = "visible";
     })
 
+    document.querySelector("#sign-up").addEventListener('click', (event) => {
+      document.querySelector('.login-content').style.display = "none";
+      document.querySelector('.signup-content').style.display = "block";
+    })
+
     document.querySelector('.close').addEventListener('click', (event) => {
       document.querySelector('.modal').style.visibility = "hidden";
     })
+
+    document.querySelector('#login-form').addEventListener('submit', (event) => {
+      event.preventDefault()
+
+      let email = document.querySelector('#email').value;
+      let password = document.querySelector('#password').value;
+
+      let isLogged = login(email, password);
+
+      if (isLogged) {
+        document.querySelector('#sign-up').innerHTML += "<p>Hello world!</p>"
+      }
+    })
+
+    document.querySelector('#signup-form').addEventListener('submit', async (event) => {
+      event.preventDefault()
+
+      let email = document.querySelector('#signupemail').value.trim().toLowerCase()
+      let username = document.querySelector('#signupusername').value;
+      let password = document.querySelector('#signuppassword').value;
+
+      await signUp(email, username, password)
+    })
+
+    async function signUp(email, name, password) {
+      let url = "/api/signup"
+      await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          email,
+          password
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+    }
+
+    function login(email, password) {
+      let url = "/api/login"
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password
+        }),
+        headers: {
+          "Content-type": "application/json"
+        }
+      }).then((res) => {
+        return res;
+      })
+    }
 
     const APIKEY = "7356f6c781f842026367b8baa225abdb";
 
@@ -145,7 +216,7 @@
     }
     setupDropdown();
   </script>
-  <style>
+  <style scoped>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
     * {
@@ -210,7 +281,8 @@
       background-color: white;
     }
 
-    #login-button {
+    #login-button,
+    #signup-button {
       height: 2rem;
       background-color: #999;
       border: none;
@@ -303,7 +375,8 @@
       color: black;
     }
 
-    #login-form {
+    #login-form,
+    #signup-form {
       display: flex;
       flex-direction: column;
       width: 25%;
@@ -319,9 +392,14 @@
       color: #555;
     }
 
-    #login-form>input {
+    #login-form>input,
+    #signup-form>input {
       height: 2rem;
       margin-bottom: 1rem;
+    }
+
+    .signup-content {
+      display: none;
     }
 
     #modal-title {

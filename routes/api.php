@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\movieController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +24,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/test/{query}', [movieController::class, 'setupSearch']);
 
 Route::get('/movie/video/{id}', [movieController::class, 'getVideo']);
+
+Route::get('/post/{movieId}/{body}', [CommentController::class, 'store']);
+
+Route::get('/delete/{commentsId}', [CommentController::class, 'deleteComment']);
+
+Route::get("/update/{commentId}/{body}", [CommentController::class, 'updateComment']);
+
+Route::get("/getuser/{userId}", [CommentController::class, 'getAllForUser']);
+
+Route::get("/getmovie/{movieId}", [CommentController::class, 'getAllForMovie']);
+
+Route::post("/signup", [UserController::class, 'createUser']);
+
+Route::post("/login", [UserController::class, 'authUser']);
