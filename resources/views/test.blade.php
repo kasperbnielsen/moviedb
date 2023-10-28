@@ -14,6 +14,11 @@
   <div id="innerbody">
     <div id="title-div">
       <h1>Popular movies</h1>
+      <?php if (session()->has('user')) {
+        $temp = session('user');
+        echo $temp->name;
+      }
+      ?>
     </div>
     <div id="searchPoster"></div>
     <div id="poster-div">

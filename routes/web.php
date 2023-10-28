@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\movieController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('test');
-});
+    return view('test', ['user' => auth()->user()]);
+})->middleware('auth');
 
 Route::get('/movie', function () {
     return view('movie');
@@ -25,4 +26,9 @@ Route::get('/movie', function () {
 
 Route::get('/', [movieController::class, 'loadPopular']);
 
-Route::Get('movie/{id}', [movieController::class, 'getDetails']);
+Route::get('movie/{id}', [movieController::class, 'getDetails']);
+
+Route::post("/authuser", [UserController::class, 'authUser']);
+Route::post("/signup", [UserController::class, 'createUser']);
+
+Route::get('/logout', [UserController::class, 'logout']);

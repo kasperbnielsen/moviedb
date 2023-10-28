@@ -3,36 +3,66 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function createUser(Request $request)
+    public function createUser()
     {
+        validator(request()->all(), [
+            'signupusername' => 'required',
+            'signupemail' => 'required|email',
+            'signuppassword' => 'required|min:8|confirmed'
+        ])->validate();
+
+
+
+
         $user = new User();
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = bcrypt($request->password);
+        $user->name = request()->signupname;
+        $user->email = request()->signupemail;
+        $user->password = bcrypt(request()->signuppassword);
 
         $user->save();
+        auth()->login($user);
+        return redirect('/');
     }
 
-    public function authUser(Request $request)
+    public function authUser()
     {
-        $user = new User();
+        validator(request()->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:8'
+        ])->validate();
 
-        $user->email = $request->email;
-
-        $user->password = $request->password;
-
-        $auth = Auth::attempt(['email' => $user->email, 'password' => $user->password]);
-
-        if ($auth) {
-            Auth::login($user, $remember = true);
+        if (auth()->attempt(request()->only(['email', 'password']))) {
+            session(['user' => auth()->user()]);
+            return redirect("/");
         }
 
-        return $auth;
+        return redirect()->back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+    }
+
+    public function logout()
+    {
+        session()->forget('user');
+        auth()->logout();
+
+        return redirect('/');
+    }
+
+    public function getUsername()
+    {
+        $id = request()->userId;
+
+        $user = User::find($id);
+
+        return $user->name;
     }
 }

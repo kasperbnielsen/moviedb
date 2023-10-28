@@ -8,6 +8,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+<?php if (session()->has('user')) {
+    $user = session('user');
+} ?>
 
 <body>
     @include('search')
@@ -75,8 +78,13 @@
     backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`;
 
     function postComment(movieId, body) {
+        let userID = <?php if (session()->has('user')) {
+                            echo $user->id;
+                        } else {
+                            echo 1;
+                        } ?>;
         $.ajax({
-            url: `/api/post/${movieId}/${body}`,
+            url: `/api/post/${movieId}/${body}/${userID}`,
             type: "GET",
             success: (result) => {
                 console.log(result)
@@ -94,25 +102,35 @@
         })
     }
 
-    function getUsername(userId) {
+    async function getUsername(userId) {
         /*** 
          * http call to endpoint querying database model User on userId getting the username
          * takes @String userId
          * return @String username
          */
-
-        return "username"
+        let data = await $.ajax({
+            url: `/api/username/${userId}`,
+            method: "GET",
+            success: (result) => {
+                console.log(result)
+            }
+        }).done((res) => {
+            return res;
+        })
+        return data;
     }
 
     function refreshComments() {
+
         $.ajax({
             url: `/api/getmovie/${window.location.pathname.substr(7)}`,
             type: "GET",
-            success: (result) => {
+            success: async (result) => {
                 comments.innerHTML = ""
                 for (let i = 0; i < result.length; i++) {
+                    let name = await getUsername(result[i].userId);
                     comments.innerHTML +=
-                        `<div class="commentsUser"><span>${getUsername("userId")}</span>${new Date(result[i].created_at).toString().substr(4, 20)}</div><div class="comments"><p class="commentsBody"> ${result[i].body} </p><button onclick="deleteComment('${result[i].commentsId}')" id="commentsDelete"> X</button> </div>`
+                        `<div class="commentsUser"><span>${name}</span>${new Date(result[i].created_at).toString().substr(4, 20)}</div><div class="comments"><p class="commentsBody"> ${result[i].body} </p><button onclick="deleteComment('${result[i].commentsId}')" id="commentsDelete"> X</button> </div>`
                 }
 
             }

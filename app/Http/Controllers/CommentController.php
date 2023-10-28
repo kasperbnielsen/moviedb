@@ -5,17 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Support\Str;
 
 class CommentController extends Controller
 {
-    public function store(Request $req, String $movieId, String $body)
+    public function store(Request $req, String $movieId, String $body, String $userId)
     {
         $comment = new Comment();
 
         $comment->commentsId = Str::uuid();
 
-        $comment->userId = "777";
+        $comment->userId = $userId;
 
         $comment->body = $body;
 

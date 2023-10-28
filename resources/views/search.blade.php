@@ -7,7 +7,13 @@
     </form>
     <div id="dropdowndiv" class="dropdown"></div>
   </div>
-  <button id="openModal" class=" menu" type="button">Login</button>
+  <?php
+  if (!session()->has('user')) {
+    echo '<button id="openModal" class="menu" type="button">Log in</button>';
+  } else {
+    echo '<button id="logout" class="menu" type="button">Log out</button>';
+  }
+  ?>
 </header>
 <div>
   <div id="login-modal">
@@ -17,19 +23,38 @@
           <span class="close">&times;</span>
           <h1 id="modal-title">Log in</h1>
         </div>
+        <?php
+        if ($errors->any()) {
+          echo '<div style="position: absolute">
+        <ul>';
+          foreach ($errors->all() as $error) {
+            echo $error;
+            echo '<br></br>';
+          }
+          echo '</ul></div>';
+        ?>
+          <script>
+            document.querySelector('.modal').style.visibility = "visible";
+          </script>
+        <?php
+        }
+        ?>
+
         <div class="signup-content">
-          <form id="signup-form" type="submit">
+          <form id="signup-form" action="{{url('signup')}}" method="POST">
             <label for="signupemail">Email</label>
             <input type="email" name="signupemail" id="signupemail" required />
             <label for="signupusername">Username</label>
             <input type="text" name="signupusername" id="signupusername" required />
             <label for="signuppassword">Password</label>
             <input type="password" name="signuppassword" id="signuppassword" required />
+            <label for="signuppassword_confirmation">Confirm password</label>
+            <input type="password" name="signuppassword_confirmation" id="signuppassword_confirmation" />
             <button id="signup-button" type="submit">Sign up</button>
           </form>
         </div>
         <div class="login-content">
-          <form id="login-form">
+          <form id="login-form" action="{{url('authuser')}}" method="POST">
             <label for="email">Email</label>
             <input type="email" name="email" id="email" required />
             <label for="password">Password</label>
@@ -46,51 +71,55 @@
       </div>
     </div>
   </div>
+  <?php
+  if ($errors->has('signupemail') | $errors->has('signupusername') | $errors->has('signuppassword')) {
+  ?>
+    <script>
+      document.querySelector('.login-content').style.display = "none";
+      document.querySelector('.signup-content').style.display = "block";
+    </script>
+  <?php
+  }
+  ?>
   <script>
-    document.querySelector('#openModal').addEventListener('click', (event) => {
-      document.querySelector('.modal').style.visibility = "visible";
-    })
+    <?php if (!session()->has('user')) { ?>
+      document.querySelector('#openModal').addEventListener('click', (event) => {
+        document.querySelector('.modal').style.visibility = "visible";
+      })
+    <?php } else {
+    ?>
+      document.querySelector('#logout').addEventListener('click', (event) => {
+        $.ajax({
+          url: "/logout",
+          method: 'GET',
+          success: (result) => {
+            console.log(result);
+          }
+        }).then(() => {
+          window.location.reload();
+        })
+      })
+    <?php } ?>
 
     document.querySelector("#sign-up").addEventListener('click', (event) => {
       document.querySelector('.login-content').style.display = "none";
       document.querySelector('.signup-content').style.display = "block";
     })
-
     document.querySelector('.close').addEventListener('click', (event) => {
+      document.querySelector('.login-content').style.display = "block";
+      document.querySelector('.signup-content').style.display = "none";
       document.querySelector('.modal').style.visibility = "hidden";
     })
 
-    document.querySelector('#login-form').addEventListener('submit', (event) => {
-      event.preventDefault()
-
-      let email = document.querySelector('#email').value;
-      let password = document.querySelector('#password').value;
-
-      let isLogged = login(email, password);
-
-      if (isLogged) {
-        document.querySelector('#sign-up').innerHTML += "<p>Hello world!</p>"
-      }
-    })
-
-    document.querySelector('#signup-form').addEventListener('submit', async (event) => {
-      event.preventDefault()
-
-      let email = document.querySelector('#signupemail').value.trim().toLowerCase()
-      let username = document.querySelector('#signupusername').value;
-      let password = document.querySelector('#signuppassword').value;
-
-      await signUp(email, username, password)
-    })
-
-    async function signUp(email, name, password) {
-      let url = "/api/signup"
+    async function signUp(email, name, password, password_confirmation) {
+      let url = "/signup"
       await fetch(url, {
         method: "POST",
         body: JSON.stringify({
           name,
           email,
-          password
+          password,
+          password_confirmation
         }),
         headers: {
           "Content-Type": "application/json"
@@ -110,7 +139,10 @@
           "Content-type": "application/json"
         }
       }).then((res) => {
-        return res;
+        console.log(res)
+        return res.status == 302 ? true : false;
+      }).catch((err) => {
+        console.error(err)
       })
     }
 
@@ -246,7 +278,7 @@
       text-decoration: underline;
       font-size: large;
       padding-top: 0.5vh;
-      margin: 0 5rem 0 5rem
+      margin: 0 4rem 0 4rem;
     }
 
     #form {
@@ -365,7 +397,8 @@
       cursor: pointer;
     }
 
-    #openModal {
+    #openModal,
+    #logout {
       border: none;
       background: none;
       color: white;
