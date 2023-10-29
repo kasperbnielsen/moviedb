@@ -13,8 +13,8 @@ class UserController extends Controller
     public function createUser()
     {
         validator(request()->all(), [
-            'signupusername' => 'required',
-            'signupemail' => 'required|email',
+            'signupusername' => 'required|unique:users,name',
+            'signupemail' => 'required|email|unique:users,email',
             'signuppassword' => 'required|min:8|confirmed'
         ])->validate();
 
@@ -23,7 +23,7 @@ class UserController extends Controller
 
         $user = new User();
 
-        $user->name = request()->signupname;
+        $user->name = request()->signupusername;
         $user->email = request()->signupemail;
         $user->password = bcrypt(request()->signuppassword);
 
