@@ -121,7 +121,6 @@
     }
 
     function refreshComments() {
-
         $.ajax({
             url: `/api/getmovie/${window.location.pathname.substr(7)}`,
             type: "GET",
@@ -154,8 +153,6 @@
     .comments {
         display: flex;
     }
-
-    .commentButton {}
 
     #commentInput {
         width: 30rem;
