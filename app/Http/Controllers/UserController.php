@@ -39,7 +39,9 @@ class UserController extends Controller
             'password' => 'required|min:8'
         ])->validate();
 
-        if (auth()->attempt(request()->only(['email', 'password']))) {
+        $remember = true;
+
+        if (auth()->attempt(request()->only(['email', 'password'], $remember))) {
             session(['user' => auth()->user()]);
             return redirect("/");
         }

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\movieController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WatchlistController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,3 +37,5 @@ Route::get("/getuser/{userId}", [CommentController::class, 'getAllForUser']);
 Route::get("/getmovie/{movieId}", [CommentController::class, 'getAllForMovie']);
 
 Route::get("/username/{userId}", [UserController::class, 'getUsername']);
+
+Route::get('/watchlist/{movie_id}/{user_id}', [WatchlistController::class, 'addToWatchlist']);

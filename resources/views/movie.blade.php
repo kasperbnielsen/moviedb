@@ -77,6 +77,14 @@
     var backdrop = document.querySelector('#backdrop');
     backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`;
 
+    $.ajax({
+        url: `/api/watchlist/${window.location.pathname.substr(7)}/${<?php echo $user->id ?>}`,
+        method: "GET",
+        success: (result) => {
+            console.log(result);
+        }
+    })
+
     function postComment(movieId, body) {
         let userID = <?php if (session()->has('user')) {
                             echo $user->id;
