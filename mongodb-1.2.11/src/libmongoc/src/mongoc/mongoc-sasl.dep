@@ -1,3 +1,0 @@
-src/libmongoc/src/mongoc/mongoc-sasl.lo: \
- /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libmongoc/src/mongoc/mongoc-sasl.c \
- /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libmongoc/src/mongoc/mongoc-config.h

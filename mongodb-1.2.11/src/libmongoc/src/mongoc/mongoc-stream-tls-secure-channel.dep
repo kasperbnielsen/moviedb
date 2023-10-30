@@ -1,3 +1,0 @@
-src/libmongoc/src/mongoc/mongoc-stream-tls-secure-channel.lo: \
- /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libmongoc/src/mongoc/mongoc-stream-tls-secure-channel.c \
- /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libmongoc/src/mongoc/mongoc-config.h

@@ -1,4 +1,0 @@
-src/libbson/src/yajl/yajl_version.lo: \
- /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_version.c \
- /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_version.h \
- /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_common.h
