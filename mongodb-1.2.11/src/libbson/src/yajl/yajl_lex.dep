@@ -1,0 +1,6 @@
+src/libbson/src/yajl/yajl_lex.lo: \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_lex.c \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_lex.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_common.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_buf.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_alloc.h
