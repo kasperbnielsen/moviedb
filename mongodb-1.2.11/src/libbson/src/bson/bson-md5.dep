@@ -1,0 +1,8 @@
+src/libbson/src/bson/bson-md5.lo: \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/bson/bson-md5.c \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/bson/bson-compat.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/bson/bson-config.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/bson/bson-macros.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/bson/bson-stdint.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/bson/bson-md5.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/bson/bson-endian.h

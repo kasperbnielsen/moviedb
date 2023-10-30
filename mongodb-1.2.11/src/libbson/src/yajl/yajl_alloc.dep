@@ -1,0 +1,4 @@
+src/libbson/src/yajl/yajl_alloc.lo: \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_alloc.c \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_alloc.h \
+ /home/kasper/Documents/moviedb/moviedb/mongodb-1.2.11/src/libbson/src/yajl/yajl_common.h

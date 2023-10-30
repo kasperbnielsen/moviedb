@@ -34,15 +34,16 @@ class UserController extends Controller
 
     public function authUser()
     {
-        validator(request()->all(), [
+        $credentials = validator(request()->all(), [
             'email' => 'required|email',
             'password' => 'required|min:8'
         ])->validate();
 
         $remember = true;
 
-        if (auth()->attempt(request()->only(['email', 'password'], $remember))) {
+        if (auth()->attempt($credentials, $remember)) {
             session(['user' => auth()->user()]);
+
             return redirect("/");
         }
 

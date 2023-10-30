@@ -39,16 +39,18 @@
                 <?php echo intval($data->popularity); ?>
             </h3>
         </div>
+        @if (session()->has('user'))
+          <button onclick="addToWatchlist()">Add to watch list</button>
+        @endif
         <div id="backdrop">
             <?php
             print_r('<img src="https://image.tmdb.org/t/p/w500' . $data->poster_path . '"/>');
             ?>
         </div>
         <div id="genres">
-            <?php foreach ($data->genres as $e) {
-                print_r("<button class='genrebuttons'>{$e->name}</button>");
-            }
-            ?>
+            @foreach ($data->genres as $e)
+                <button class='genrebuttons'>{{$e->name}}</button>
+            @endforeach
         </div>
         <h2>Overview</h2>
         <div id="overview">
@@ -77,30 +79,35 @@
     var backdrop = document.querySelector('#backdrop');
     backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`;
 
+
+   function addToWatchlist() {
+    @if(session()->has('user'))
     $.ajax({
-        url: `/api/watchlist/${window.location.pathname.substr(7)}/${<?php echo $user->id ?>}`,
+        url: `/api/watchlist/${window.location.pathname.substr(7)}/{{$user->id}}`,
         method: "GET",
         success: (result) => {
             console.log(result);
         }
     })
+    @endif
+   }   
+    
 
     function postComment(movieId, body) {
-        let userID = <?php if (session()->has('user')) {
-                            echo $user->id;
-                        } else {
-                            echo 1;
-                        } ?>;
+      @if (session()->has('user'))
         $.ajax({
-            url: `/api/post/${movieId}/${body}/${userID}`,
+            url: `/api/post/${movieId}/${body}/{{$user->id}}`,
             type: "GET",
             success: (result) => {
                 console.log(result)
             }
         })
+        @endif
     }
 
-    function deleteComment(commentsId) {
+    function deleteComment(commentsId, userId) {
+      @if (session()->has('user'))
+      if(userId == {{$user->id}}) {
         $.ajax({
             url: `/api/delete/${commentsId}`,
             type: "GET",
@@ -108,6 +115,11 @@
                 refreshComments()
             }
         })
+      } 
+      else {
+        alert("Not ur comment")
+      }
+      @endif
     }
 
     async function getUsername(userId) {
@@ -137,7 +149,7 @@
                 for (let i = 0; i < result.length; i++) {
                     let name = await getUsername(result[i].userId);
                     comments.innerHTML +=
-                        `<div class="commentsUser"><span>${name}</span>${new Date(result[i].created_at).toString().substr(4, 20)}</div><div class="comments"><p class="commentsBody"> ${result[i].body} </p><button onclick="deleteComment('${result[i].commentsId}')" id="commentsDelete"> X</button> </div>`
+                        `<div class="commentsUser"><span>${name}</span>${new Date(result[i].created_at).toString().substr(4, 20)}</div><div class="comments"><p class="commentsBody"> ${result[i].body} </p><button onclick="deleteComment('${result[i].commentsId}', ${result[i].userId})" id="commentsDelete"> X</button> </div>`
                 }
 
             }
