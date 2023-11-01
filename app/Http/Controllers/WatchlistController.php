@@ -18,4 +18,21 @@ class WatchlistController extends Controller
 
         $entity->save();
     }
+
+    function removeFromWatchlist()
+    {
+        $user = request()->input('user_id');
+        $movie = request()->input('movie_id');
+
+        $watchlist = Watchlist::where('user_id', $user)->where('movie_id', $movie);
+
+        $watchlist->delete();
+    }
+
+    function getWatchlist()
+    {
+        $watchlist = Watchlist::where('user_id', '=', request()->user_id)->where('movie_id', '=', request()->movie_id)->get();
+
+        return $watchlist;
+    }
 }

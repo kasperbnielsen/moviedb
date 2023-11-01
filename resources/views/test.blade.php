@@ -78,7 +78,6 @@
       })
     });
 
-
     var posters = document.querySelectorAll(".redposter");
 
     posters.forEach((element, i) => {

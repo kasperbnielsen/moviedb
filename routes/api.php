@@ -39,3 +39,7 @@ Route::get("/getmovie/{movieId}", [CommentController::class, 'getAllForMovie']);
 Route::get("/username/{userId}", [UserController::class, 'getUsername']);
 
 Route::get('/watchlist/{movie_id}/{user_id}', [WatchlistController::class, 'addToWatchlist']);
+
+Route::post('/removeFromWatchlist', [WatchlistController::class, 'removeFromWatchlist']);
+
+Route::get('/getWatchlist/{user_id}/{movie_id}', [WatchlistController::class, 'getWatchlist']);

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/d826f0fb4b.js" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <?php if (session()->has('user')) {
@@ -13,12 +15,13 @@
 } ?>
 
 <body>
+    <script></script>
     @include('search')
     <div id="innerbody">
         <div id="title-div">
             <div id="title">
                 <h1>
-                    <?php echo $data->title; ?>
+                    {{ $data->title }}
                 </h1>
                 <ul id="under-title-div">
                     <a>
@@ -39,9 +42,6 @@
                 <?php echo intval($data->popularity); ?>
             </h3>
         </div>
-        @if (session()->has('user'))
-          <button onclick="addToWatchlist()">Add to watch list</button>
-        @endif
         <div id="backdrop">
             <?php
             print_r('<img src="https://image.tmdb.org/t/p/w500' . $data->poster_path . '"/>');
@@ -49,14 +49,21 @@
         </div>
         <div id="genres">
             @foreach ($data->genres as $e)
-                <button class='genrebuttons'>{{$e->name}}</button>
+                <button class='genrebuttons'>{{ $e->name }}</button>
             @endforeach
         </div>
-        <h2>Overview</h2>
+        <div class="title-div">
+            <h2>Overview</h2>
+            <button id="watchlist-button">
+                <i class="fa-solid fa-plus plus"></i>
+                Add to watchlist
+            </button>
+        </div>
         <div id="overview">
             <?php
             print_r("<p>$data->overview</p>");
             ?>
+
         </div>
         <div>
             <h4 id="commentsheader">Reviews</h4>
@@ -79,47 +86,102 @@
     var backdrop = document.querySelector('#backdrop');
     backdrop.innerHTML += `<iframe src="https://www.youtube.com/embed/${key}?controls=0&autoplay=0&mute=1"></iframe>`;
 
+    let isAdded = false;
+    let button = document.querySelector('#watchlist-button');
 
-   function addToWatchlist() {
-    @if(session()->has('user'))
-    $.ajax({
-        url: `/api/watchlist/${window.location.pathname.substr(7)}/{{$user->id}}`,
-        method: "GET",
-        success: (result) => {
-            console.log(result);
+    async function getWatchlist() {
+        //if is logged in
+        @if (session()->has('user'))
+            let a = await $.ajax({
+                url: `/api/getWatchlist/{{ $user->id }}/${window.location.pathname.substr(7)}`,
+                method: 'GET',
+            }).done((res) => {
+                //if current movie is watchlisted by current user
+                if (res.length > 0) {
+                    button.style = 'background-color: grey';
+                    button.innerHTML =
+                        '<i class="fa-solid fa-check plus"></i> Remove from watchlist';
+                    isAdded = true;
+                }
+                //if current movie is not watchlisted by current user
+                else {
+                    button.style = 'background-color: yellow';
+                    button.innerHTML =
+                        '<i class="fa-solid fa-plus plus"></i> Add to watchlist';
+                    isAdded = false;
+                }
+            })
+            //if not logged in
+        @else
+            document.querySelector('#watchlist-button').style.visibility = 'hidden';
+        @endif
+    }
+
+    getWatchlist();
+
+    button.addEventListener('click', async (event) => {
+        if (isAdded) {
+            await deleteFromWatchlist();
+        } else {
+            await addToWatchlist();
         }
+        getWatchlist();
     })
-    @endif
-   }   
-    
+
+    async function deleteFromWatchlist() {
+        @if (session()->has('user'))
+            return fetch('/api/removeFromWatchlist', {
+                method: 'POST',
+                body: JSON.stringify({
+                    movie_id: parseInt(window.location.pathname.substr(7), 10),
+                    user_id: {{ $user->id }}
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            })
+        @endif
+    }
+
+    async function addToWatchlist() {
+        @if (session()->has('user'))
+            return $.ajax({
+                url: `/api/watchlist/${window.location.pathname.substr(7)}/{{ $user->id }}`,
+                method: "GET",
+                success: (result) => {
+                    console.log(result);
+                }
+            })
+        @endif
+    }
+
 
     function postComment(movieId, body) {
-      @if (session()->has('user'))
-        $.ajax({
-            url: `/api/post/${movieId}/${body}/{{$user->id}}`,
-            type: "GET",
-            success: (result) => {
-                console.log(result)
-            }
-        })
+        @if (session()->has('user'))
+            $.ajax({
+                url: `/api/post/${movieId}/${body}/{{ $user->id }}`,
+                type: "GET",
+                success: (result) => {
+                    console.log(result)
+                }
+            })
         @endif
     }
 
     function deleteComment(commentsId, userId) {
-      @if (session()->has('user'))
-      if(userId == {{$user->id}}) {
-        $.ajax({
-            url: `/api/delete/${commentsId}`,
-            type: "GET",
-            success: (result) => {
-                refreshComments()
+        @if (session()->has('user'))
+            if (userId == {{ $user->id }}) {
+                $.ajax({
+                    url: `/api/delete/${commentsId}`,
+                    type: "GET",
+                    success: (result) => {
+                        refreshComments()
+                    }
+                })
+            } else {
+                alert("Not ur comment")
             }
-        })
-      } 
-      else {
-        alert("Not ur comment")
-      }
-      @endif
+        @endif
     }
 
     async function getUsername(userId) {
@@ -163,6 +225,7 @@
         postComment(window.location.pathname.substr(7), input)
         refreshComments()
     })
+
     refreshComments();
 </script>
 
@@ -335,5 +398,35 @@
     i,
     span {
         margin-right: 0.5rem;
+    }
+
+    #watchlist-button {
+        width: 15rem;
+        height: 2rem;
+        border-radius: 5px;
+        font-weight: 700;
+        background-color: #f7e70b;
+        border: none;
+        margin: 1rem 0 1rem 60rem;
+    }
+
+    #watchlist-button:hover {
+        background-color: #837b09;
+    }
+
+    button:hover {
+        cursor: pointer;
+    }
+
+    #watchlist-button:disabled {
+        background-color: grey;
+    }
+
+    .title-div {
+        display: flex;
+    }
+
+    .plus {
+        color: black;
     }
 </style>
