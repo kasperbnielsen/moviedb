@@ -43,3 +43,7 @@ Route::get('/watchlist/{movie_id}/{user_id}', [WatchlistController::class, 'addT
 Route::post('/removeFromWatchlist', [WatchlistController::class, 'removeFromWatchlist']);
 
 Route::get('/getWatchlist/{user_id}/{movie_id}', [WatchlistController::class, 'getWatchlist']);
+
+Route::get('getUserWatchlist/{user_id}', [WatchlistController::class, 'getUserWatchlist']);
+
+Route::get('/getPosterPath/{id}', [movieController::class, 'getPosterPath']);

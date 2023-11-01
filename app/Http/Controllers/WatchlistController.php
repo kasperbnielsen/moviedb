@@ -35,4 +35,11 @@ class WatchlistController extends Controller
 
         return $watchlist;
     }
+
+    function getUserWatchlist()
+    {
+        $watchlist = Watchlist::where('user_id', request()->user_id)->get();
+
+        return $watchlist;
+    }
 }
