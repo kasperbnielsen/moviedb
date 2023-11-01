@@ -34,7 +34,7 @@
             ?>
             <button id="right-arrow"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
-        <h1>Your Watchlist</h1>
+        <h1 id="watchlist-title">Your Watchlist</h1>
         <div id="watchlist-div">
 
         </div>
@@ -89,16 +89,23 @@
 
             getWatchlist().then(async (response) => {
                 let div = document.querySelector('#watchlist-div');
-                for (let i = 0; i < response.length; i++) {
+                for (let i = 0; i < 6; i++) {
                     let movie = document.createElement('img');
                     let a = document.createElement('a')
                     a.setAttribute('class', 'redposter')
-                    let posterpath = await getPosterPath(response[i].movie_id);
-                    movie.setAttribute('src', `https://image.tmdb.org/t/p/w500${posterpath.poster_path}`)
+                    if(i < response.length) {
+                        let posterpath = await getPosterPath(response[i].movie_id);
+                        movie.setAttribute('src', `https://image.tmdb.org/t/p/w500${posterpath.poster_path}`)
+                        a.setAttribute('href', `/movie/${response[i].movie_id}`)
+                    } else {
+                        movie.setAttribute('src', "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-63747.jpg?w=2000")
+                    }
+                    
                     movie.setAttribute('class', 'poster')
                     a.appendChild(movie)
                     div.appendChild(a)
                 }
+                
             })
         @endif
 
@@ -166,12 +173,12 @@
         background-color: #222;
     }
 
-    #poster-div {
+    #poster-div, #watchlist-div {
         display: flex;
         place-content: center;
     }
 
-    #title-div {
+    #title-div, #watchlist-title {
         margin-top: 2rem;
         margin-left: 9rem;
     }
