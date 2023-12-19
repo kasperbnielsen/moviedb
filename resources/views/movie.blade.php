@@ -81,6 +81,8 @@
     </div>
 </body>
 <script>
+    console.log(<?php echo $user; ?>);
+    console.log("Hello");
     let comments = document.querySelector("#comments");
     let key = "<?php echo $key->results[0]->key; ?>";
     var backdrop = document.querySelector('#backdrop');

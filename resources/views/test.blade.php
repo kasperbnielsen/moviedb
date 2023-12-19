@@ -77,37 +77,52 @@
                 return result.json();
             })
         }
-        @if (session()->has('user'))
 
-            async function getWatchlist() {
-                return fetch(`/api/getUserWatchlist/{{ session('user')->id }}`, {
-                    method: "GET"
-                }).then(async (result) => {
-                    return result.json();
-                })
-            }
-
-            getWatchlist().then(async (response) => {
-                let div = document.querySelector('#watchlist-div');
-                for (let i = 0; i < 6; i++) {
-                    let movie = document.createElement('img');
-                    let a = document.createElement('a')
-                    a.setAttribute('class', 'redposter')
-                    if(i < response.length) {
-                        let posterpath = await getPosterPath(response[i].movie_id);
-                        movie.setAttribute('src', `https://image.tmdb.org/t/p/w500${posterpath.poster_path}`)
-                        a.setAttribute('href', `/movie/${response[i].movie_id}`)
-                    } else {
-                        movie.setAttribute('src', "https://img.freepik.com/free-photo/abstract-luxury-plain-blur-grey-black-gradient-used-as-background-studio-wall-display-your-products_1258-63747.jpg?w=2000")
-                    }
-                    
-                    movie.setAttribute('class', 'poster')
-                    a.appendChild(movie)
-                    div.appendChild(a)
-                }
-                
+        async function getWatchlist(id) {
+            return fetch(`/api/getUserWatchlist/${id}`, {
+                method: "GET"
+            }).then(async (result) => {
+                return result.json();
             })
-        @endif
+        }
+
+
+        getWatchlist(
+            @if (session()->has('user'))
+                {{ session('user')->id }}
+            @else
+                -1
+            @endif
+        ).then(async (response) => {
+            let div = document.querySelector('#watchlist-div');
+            if (response.length == 0) {
+                let text = document.createElement('p');
+                @if (session()->has('user'))
+                    text.innerHTML = "Your watchlist is empty. Go to a movies page to add it to your watchlist";
+                @else
+                    text.innerHTML = "Login to access your watchlist"
+                @endif
+
+                text.setAttribute('id', 'emptywatchlist')
+                div.appendChild(text);
+            }
+            for (let i = 0; i < 6; i++) {
+                let movie = document.createElement('img');
+                let a = document.createElement('a')
+                a.setAttribute('class', 'redposter')
+                if (i < response.length) {
+                    let posterpath = await getPosterPath(response[i].movie_id);
+                    movie.setAttribute('src', `https://image.tmdb.org/t/p/w500${posterpath.poster_path}`)
+                    a.setAttribute('href', `/movie/${response[i].movie_id}`)
+                } else {
+                    movie.style.visibility = 'hidden';
+                }
+
+                movie.setAttribute('class', 'poster')
+                a.appendChild(movie)
+                div.appendChild(a)
+            }
+        })
 
         document.querySelector("#form").addEventListener("submit", (event) => {
             event.preventDefault();
@@ -156,7 +171,7 @@
         margin: auto;
         min-height: inherit;
         height: inherit;
-        padding: 0 2rem 0 2rem;
+        padding: 0 2rem 10rem 2rem;
         max-width: 75%;
         display: flex;
         flex-direction: column;
@@ -173,12 +188,14 @@
         background-color: #222;
     }
 
-    #poster-div, #watchlist-div {
+    #poster-div,
+    #watchlist-div {
         display: flex;
         place-content: center;
     }
 
-    #title-div, #watchlist-title {
+    #title-div,
+    #watchlist-title {
         margin-top: 2rem;
         margin-left: 9rem;
     }
@@ -206,5 +223,10 @@
     #right-arrow:hover,
     #left-arrow:hover {
         opacity: 0.8;
+    }
+
+    #emptywatchlist {
+        position: absolute;
+        margin-top: 7rem;
     }
 </style>
